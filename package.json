@@ -1,0 +1,71 @@
+{
+  "name": "project-viewer",
+  "displayName": "Project viewer",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.59.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:projectDetails.show",
+    "onView:projectDependencies"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "projectDetails.show",
+        "title": "Project Details",
+        "category": "Project Details"
+      }
+    ],
+    "views": {
+      "package-explorer": [
+        {
+          "id": "projectDependencies",
+          "name": "Project Dependencies",
+          "icon": "media/dep.svg",
+          "contextualTitle": "Package Explorer"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "package-explorer",
+          "title": "Package Explorer",
+          "icon": "media/dep.svg"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "test-compile": "tsc -p ./",
+    "test-watch": "tsc -watch -p ./",
+    "pretest": "npm run test-compile && npm run lint",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.59.0",
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "14.x",
+    "eslint": "^7.27.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "glob": "^7.1.7",
+    "mocha": "^8.4.0",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2",
+    "ts-loader": "^9.2.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0"
+  }
+}
