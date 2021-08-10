@@ -59,9 +59,9 @@ export default class ProjectDetailsPanel {
 				<link href="${codiconsUri}" rel="stylesheet" />
 			</head>
 			<body>
-				<h1>${JSON.parse(project)?.organizationName}</h1>
+				<h1>${JSON.parse(project)?.name}</h1>
 				<div id="icons">
-					<h3>${project}</h3>
+					<code>${project}</code>
 				</div>
 			</body>
 			</html>`;

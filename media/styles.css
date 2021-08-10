@@ -67,7 +67,7 @@ h1 {
   text-align: center;
 }
 
-#icons .icon .codicon {
-  font-size: 32px;
-  padding-bottom: 16px;
+code {
+  width: 100%;
+  height: 100vh;
 }

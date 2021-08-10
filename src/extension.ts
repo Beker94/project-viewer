@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import ProjectDetailsPanel from "./webView";
 const fs = require("fs");
 import { DepNodeProvider } from "./projectDependencies";
+import crowdin, { Credentials } from "@crowdin/crowdin-api-client";
 
 function handleResult<T>(
   resolve: (result: T) => void,
@@ -36,17 +37,27 @@ function startWatchingWorkspace(): void {
     );
 
     vscode.workspace.findFiles(pattern).then((files) => {
-      const getData = files.map((file) => {
-        return readFile(file.path);
-      });
-      Promise.all(getData).then((el) => {
-        const allData = el.map((data) => JSON.parse(data.toString()));
-        const projectDependenciesProvider = new DepNodeProvider(allData);
+      if (!files.length) {
+        vscode.window.showErrorMessage("No crowdin.json file");
+      }
 
-        vscode.window.registerTreeDataProvider(
-          "projectDependencies",
-          projectDependenciesProvider
-        );
+      readFile(files[0].path).then((el) => {
+        const project: Credentials = JSON.parse(el.toString());
+        const { projectsGroupsApi } = new crowdin(project);
+
+        projectsGroupsApi
+          .listProjects()
+          .then((projects) => {
+            const projectDependenciesProvider = new DepNodeProvider(projects);
+
+            vscode.window.registerTreeDataProvider(
+              "projectDependencies",
+              projectDependenciesProvider
+            );
+          })
+          .catch(({ error }) => {
+            vscode.window.showErrorMessage(error.message);
+          });
       });
     });
   });

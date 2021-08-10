@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "path";
+import { ProjectsGroupsModel, ResponseList } from "@crowdin/crowdin-api-client";
 
 export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
   private _onDidChangeTreeData: vscode.EventEmitter<
@@ -9,7 +10,11 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
     Dependency | undefined | void
   > = this._onDidChangeTreeData.event;
 
-  constructor(private allData: any) {}
+  constructor(
+    private projects: ResponseList<
+      ProjectsGroupsModel.Project | ProjectsGroupsModel.ProjectSettings
+    >
+  ) {}
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
@@ -20,21 +25,21 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
   }
 
   getChildren() {
-    if (!this.allData.length) {
+    if (!this.projects) {
       vscode.window.showInformationMessage("No dependency in empty workspace");
       return Promise.resolve([]);
     }
 
     return Promise.resolve(
-      this.allData.map((el: any, index: number) => {
+      this.projects.data.map((el: any, index: number) => {
         return new Dependency(
-          el.organizationName,
+          el.data.name,
           `${index + 1}`,
           vscode.TreeItemCollapsibleState.None,
           {
             command: "projectDetails.show",
             title: "",
-            arguments: [JSON.stringify(el)],
+            arguments: [JSON.stringify(el.data)],
           }
         );
       })
@@ -52,7 +57,6 @@ export class Dependency extends vscode.TreeItem {
     super(label, collapsibleState);
 
     this.tooltip = `${this.label}-${this.version}`;
-    this.description = this.version;
   }
 
   iconPath = {
